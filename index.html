@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ワンクリックmyコード</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-content">
+                <h1>ワンクリック<span>My </span>コード <small style="font-size: 0.6em; color: #ff9500; font-weight: 500;">Demo</small></h1>
+                <button class="help-btn" onclick="openHelpModal()" title="使い方を見る" style="margin-left: 2rem;">
+                    使い方
+                </button>
+            </div>
+        </header>
+
+        <!-- タブナビゲーション -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" onclick="switchTab('list')">一覧・検索</button>
+            <button class="tab-btn" onclick="switchTab('register')">登録・管理</button>
+        </div>
+
+        <!-- 登録・管理タブ -->
+        <div id="register-tab" class="tab-content">
+            <div class="register-section">
+                <!-- 入力フォーム -->
+                <div class="input-section">
+                    <h3>🎆 demo版 - サンプルフォーム</h3>
+                    <form id="snippet-form">
+                        <div class="form-group">
+                            <label for="title">タイトル:</label>
+                            <input type="text" id="title" placeholder="例: React useState フック" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="language">言語:</label>
+                            <select id="language">
+                                <option value="javascript">JavaScript</option>
+                                <option value="python">Python</option>
+                                <option value="html">HTML</option>
+                                <option value="css">CSS</option>
+                                <option value="typescript">TypeScript</option>
+                                <option value="jsx">React (JSX)</option>
+                                <option value="vue">Vue</option>
+                                <option value="php">PHP</option>
+                                <option value="sql">SQL</option>
+                                <option value="bash">Bash</option>
+                                <option value="json">JSON</option>
+                                <option value="yaml">YAML</option>
+                                <option value="markdown">Markdown</option>
+                                <option value="plaintext">プレーンテキスト</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="code">コード:</label>
+                            <textarea id="code" placeholder="コードを入力してください..." required></textarea>
+                        </div>
+
+                        
+
+                        <div class="form-group">
+                            <label for="description">説明 (オプション):</label>
+                            <textarea id="description" placeholder="このコードの説明や使用例を入力してください..." rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tags">タグ:</label>
+                            <input type="text" id="tags" placeholder="例: react, hooks, javascript (カンマ区切り)">
+                        </div>
+
+                        <button type="submit" class="save-btn">💾 保存</button>
+                    </form>
+                </div>
+
+                <!-- demo版情報 -->
+                <div class="data-management">
+                    <h3>🎆 demo版について</h3>
+                    
+                    <div class="demo-info">
+                        <div class="demo-notice">
+                            <div class="demo-icon">📝</div>
+                            <div class="demo-text">
+                                <strong>これはdemo版です</strong><br>
+                                サンプルデータで機能をお試しいただけます
+                            </div>
+                        </div>
+                        
+                        <div class="demo-features">
+                            <h4>✨ 体験できる機能</h4>
+                            <ul>
+                                <li>🔍 コードの検索とフィルタリング</li>
+                                <li>🏷️ タグでの絞り込み（AND/OR検索）</li>
+                                <li>📋 クリップボードへのコピー</li>
+                                <li>🌈 シンタックスハイライト</li>
+                                <li>🐐 タグのドラッグ並び替え</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="demo-limitation">
+                            <h4>⚠️ demo版の制限</h4>
+                            <ul>
+                                <li>スニペットの新規追加はできません</li>
+                                <li>既存スニペットの編集・削除はできません</li>
+                                <li>データの保存・エクスポートはできません</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="demo-sample">
+                            <strong>📊 サンプルデータ</strong>
+                            <p>React、Python、CSS、JavaScript、HTML、Vue.js、SQL、TypeScript、Bash、JSONの実用的なコードサンプルを10件収録</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 一覧・検索タブ -->
+        <div id="list-tab" class="tab-content active">
+            <div class="list-section">
+                <!-- 検索バー -->
+                <div class="search-section">
+                    <h3>検索・フィルター</h3>
+                    <div class="search-controls">
+                        <input type="text" id="search-input" placeholder="タイトルや内容で検索..." onInput="searchSnippets()">
+                        <button class="search-clear-btn" onclick="clearSearch()">✕</button>
+                    </div>
+                </div>
+
+                <!-- タグフィルター -->
+                <div class="filter-section">
+                    <h4>🏷️ タグで絞り込み:</h4>
+                    <div class="filter-controls">
+                        <button class="filter-mode-btn" id="filter-mode-btn" onclick="toggleFilterMode()">
+                            🔗 AND検索（絞り込み）
+                        </button>
+                        <button class="clear-filter-btn" onclick="clearAllFilters()">
+                            ✖️ フィルターをクリア
+                        </button>
+                    </div>
+                    <div id="tag-filters">
+                        <button class="tag-filter active" data-tag="all">全て</button>
+                    </div>
+                    <div class="selected-tags" id="selected-tags" style="display: none;">
+                        <span class="selected-label">選択中:</span>
+                    </div>
+                </div>
+
+                <!-- スニペット一覧 -->
+                <div class="snippets-section">
+                    <div class="snippets-header">
+                        <h4>スニペット一覧</h4>
+                        <span id="filtered-count">0件</span>
+                    </div>
+                    <div id="snippets-container">
+                        <!-- スニペットがここに表示される -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 使い方モーダル -->
+    <div id="help-modal" class="modal" style="display: none;">
+        <div class="modal-content help-modal-content">
+            <div class="modal-header">
+                <h3>使い方ガイド</h3>
+                <button class="modal-close" onclick="closeHelpModal()">×</button>
+            </div>
+            <div class="help-content">
+                <!-- 基本操作 -->
+                <section class="help-section">
+                    <h4>基本操作</h4>
+                    <div class="help-steps">
+                        <div class="help-step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <strong>スニペットを追加</strong>
+                                <p>「登録・管理」タブでタイトル、コード、タグを入力して「💾 保存」</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <strong>コードをコピー</strong>
+                                <p>コードエリア右上の「Copy」ボタンをクリックでクリップボードにコピー</p>
+                            </div>
+                        </div>
+                        <div class="help-step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <strong>検索・絞り込み</strong>
+                                <p>検索バーでテキスト検索、タグをクリックでフィルター</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 高度な機能 -->
+                <section class="help-section">
+                    <h4>高度な機能</h4>
+                    <div class="help-features">
+                        <div class="help-feature">
+                            <div class="feature-icon">🏷️</div>
+                            <div class="feature-content">
+                                <strong>スマートタグフィルター</strong>
+                                <p>タグをクリックすると他のタグの件数がリアルタイム更新。絞り込み結果が一目でわかります。</p>
+                            </div>
+                        </div>
+                        <div class="help-feature">
+                            <div class="feature-icon">🔗</div>
+                            <div class="feature-content">
+                                <strong>AND/OR検索</strong>
+                                <p>「🔗 AND検索」で絞り込み、「🌐 OR検索」で幅広く検索できます。</p>
+                            </div>
+                        </div>
+                        <div class="help-feature">
+                            <div class="feature-icon">🐐</div>
+                            <div class="feature-content">
+                                <strong>ドラッグ並び替え</strong>
+                                <p>タグをドラッグして好みの順序に並び替え。順序は自動保存されます。</p>
+                            </div>
+                        </div>
+                        <div class="help-feature">
+                            <div class="feature-icon">🌈</div>
+                            <div class="feature-content">
+                                <strong>シンタックスハイライト</strong>
+                                <p>コードが言語別に美しく色分け表示され、読みやすくなります。JavaScript、Python、HTMLなど多数の言語に対応。</p>
+                            </div>
+                        </div>
+                        <div class="help-feature">
+                            <div class="feature-icon">✏️</div>
+                            <div class="feature-content">
+                                <strong>編集機能</strong>
+                                <p>「編集」ボタンで既存のスニペットを修正できます。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- データ管理 -->
+                <section class="help-section">
+                    <h4>💾 データ管理</h4>
+                    <div class="help-tips">
+                        <div class="help-tip">
+                            <strong>📤 バックアップ</strong>
+                            <p>「📤 data.json をダウンロード」で全データをバックアップ。タグの順序も含まれます。</p>
+                        </div>
+                        <div class="help-tip">
+                            <strong>📥 復元</strong>
+                            <p>ドラッグ＆ドロップエリアにファイルを落とすか、インポートボタンで復元。</p>
+                        </div>
+                        <div class="help-tip">
+                            <strong>🔄 自動保存</strong>
+                            <p>スニペットやタグ順序はブラウザに自動保存。ページを閉じても安心です。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- コツ -->
+                <section class="help-section">
+                    <h4>💡 使いこなしのコツ</h4>
+                    <div class="help-tips">
+                        <div class="help-tip">
+                            <strong>🏷️ タグの付け方</strong>
+                            <p>「javascript, react, hooks」のように詳細から大きなカテゴリに向かってタグを付けると検索しやすくなります。</p>
+                        </div>
+                        <div class="help-tip">
+                            <strong>🔍 効率的な検索</strong>
+                            <p>「検索バー + タグフィルター」を組み合わせると、大量のスニペットからも瞬時に目的のコードを見つけられます。</p>
+                        </div>
+                        <div class="help-tip">
+                            <strong>📝 説明欄活用</strong>
+                            <p>コードの使用例や注意点を説明欄に書いておくと、後で思い出しやすくなります。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ショートカット -->
+                <section class="help-section">
+                    <h4>⌨️ ショートカット</h4>
+                    <div class="shortcuts">
+                        <div class="shortcut">
+                            <kbd>F</kbd> <span>検索バーにフォーカス（一覧タブで）</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>?</kbd> <span>このヘルプを開く</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>H</kbd> <span>このヘルプを開く</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Esc</kbd> <span>モーダルを閉じる</span>
+                        </div>
+                        <div class="shortcut">
+                            <kbd>Ctrl</kbd> + <kbd>C</kbd> <span>コピー後の貼り付け</span>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- 編集モーダル -->
+    <div id="edit-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 スニペットを編集</h3>
+                <button class="modal-close" onclick="closeEditModal()">×</button>
+            </div>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label for="edit-title">タイトル:</label>
+                    <input type="text" id="edit-title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-code">コード:</label>
+                    <textarea id="edit-code" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-language">言語:</label>
+                    <select id="edit-language">
+                        <option value="javascript">JavaScript</option>
+                        <option value="python">Python</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="typescript">TypeScript</option>
+                        <option value="jsx">React (JSX)</option>
+                        <option value="vue">Vue</option>
+                        <option value="php">PHP</option>
+                        <option value="sql">SQL</option>
+                        <option value="bash">Bash</option>
+                        <option value="json">JSON</option>
+                        <option value="yaml">YAML</option>
+                        <option value="markdown">Markdown</option>
+                        <option value="plaintext">プレーンテキスト</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-description">説明 (オプション):</label>
+                    <textarea id="edit-description" placeholder="このコードの説明や使用例を入力してください..." rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-tags">タグ:</label>
+                    <input type="text" id="edit-tags" placeholder="例: react, hooks, javascript (カンマ区切り)">
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="cancel-btn" onclick="closeEditModal()">キャンセル</button>
+                    <button type="submit" class="update-btn">💾 更新</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
